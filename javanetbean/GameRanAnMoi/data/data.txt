@@ -1,0 +1,5 @@
+duc 40
+duc2 20
+duc2 40
+phuongtrungduc 60
+ducpt 180

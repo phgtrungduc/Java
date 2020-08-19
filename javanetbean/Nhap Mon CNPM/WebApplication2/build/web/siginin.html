@@ -1,0 +1,162 @@
+<head>
+    <meta charset="utf-8">
+    <title>Đăng nhập</title>
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito"> -->
+<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="css/signin.css" rel="stylesheet">
+</head>
+<div class="container">
+    <div class="row justify-content-center">
+            <div class="col-md-6">
+     <div class="card card-container">
+            <h1 style="text-align: center"><b>Đăng nhập</b></h1>
+    <form class="form-signin">
+        <input type="text" class="form-control" placeholder="Username" v-model="formSignin.username">
+        <input type="password" class="form-control" placeholder="Password" v-model="formSignin.password">
+        <div id="remember" class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+        <strong> <div class="alert alert-danger"  style="text-align: center; padding:0; border:0" v-show="errorSignin == true">{{messErrSignin}}
+        </div></strong>
+                        
+        <button class="btn btn-lg btn-primary btn-block btn-signin" v-on:click ="signin" type="button">Sign in</button>
+    </form><!-- /form -->
+    <a href="#" class="forgot-password">
+        Forgot the password?
+    </a>
+</div><!-- /card-container -->
+</div>
+
+<div class="col-md-6">
+        <div class="card card-container">
+           
+           <h1 style="text-align: center"><b>Đăng ký</b></h1>
+            <form class="form-signin">
+                <input type="text"class="form-control" v-model="formSignup.username" placeholder="Username" >
+                
+                <input type="text" id="name" v-model="formSignup.name" class="form-control" placeholder="Tên của bạn">
+                <input type="password" v-model="formSignup.password" class="form-control" placeholder="Password" >
+                <input type="password"  v-model="formSignup.rePassword" class="form-control" placeholder="Nhập lại Password" >
+                
+                <strong> <div class="alert alert-danger"  style="text-align: center; padding:0; border:0; display: none;" v-show="errorSignup == true">{{messErrSignup}}</div></strong>
+                                
+                <button class="btn btn-lg btn-primary btn-block btn-signin"  v-on:click ="signup" type="button">Sign up</button>
+            </form><!-- /form -->
+            <a href="index.html" class="forgot-password">
+                login with google ?
+            </a>
+        </div><!-- /card-container -->
+        </div>
+        </div>
+    
+</div><!-- /container -->
+<script src="js/vue.min.js"></script>
+<script src="js/axios.js"></script>
+<script>
+    var app = new Vue({
+        el: '.container',
+        data: {
+            errorSignup: false,
+            errorSignin: false,
+            messErrSignin: '',
+            messErrSignup: '',
+
+      formSignin:{
+          username: '',
+          password: ''
+                 },
+      formSignup: {
+        username: '',
+        password: '',
+        name: '',
+        rePassword: '',
+      }
+
+        },
+        methods: {
+     signin(){
+     if(this.formSignin.username.length < 5 ) 
+     { 
+        this.messErrSignin= 'username tối thiểu 5 ký tự';
+         this.errorSignin = true;
+      return false ;
+      }
+      if(this.formSignin.password.length < 5 ) 
+      { 
+        this.messErrSignin= 'password tối thiểu 5 ký tự';
+         this.errorSignin = true;
+            return false ;
+      };
+     axios.post('/loginsuccess.jsp',  this.formData).then((res)=>{
+        if(res.data == '0')
+        {
+          this.messErr ='Tên tài khoản hoặc mật khẩu không đúng';
+              this.errorSignin = true;
+              return false 
+        }else
+        {
+            this.errorSignin = false;
+            alert("đăng nhập thành công");
+        }
+     })
+     },
+//     axios
+//   .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+//   .then(response => {
+//       alert(response);
+//   } )
+
+
+       signup(){
+        if(this.formSignup.username.length < 5 ) 
+    { 
+       this.messErrSignup= 'username tối thiểu 5 ký tự';
+        this.errorSignup = true;
+     return false 
+     };
+     if(this.formSignup.password.length < 5 ) 
+     { 
+       this.messErrSignup= 'password tối thiểu 5 ký tự';
+       console.log(this.formSignup.password)
+        this.errorSignup = true;
+     return false 
+     }
+       if(this.formSignup.name.length == 0 ) 
+     { 
+       this.messErrSignup= 'tên của bạn đâu ?';
+        this.errorSignup = true;
+
+     return false 
+     }
+       if(this.formSignup.password != this.formSignup.rePassword ) 
+     { 
+       this.messErrSignup= 'Nhập lại mật khẩu không đúng';
+        this.errorSignup = true;
+
+     return false ;
+     };
+
+    axios.post('http://localhost:3000/api/signup', {
+        username: this.formData.username,
+        password: this.formData.password,
+        name: this.formData.name
+    }).then((res)=>{
+       if(res.data == '0')
+       {
+         this.messErrSignup ='Username đã được sử dụng';
+             this.errorSignup = true;
+       }else
+       {
+            this.errorSignup = false;
+         alert('đăng ký thành công, bây giờ hãy đăng nhập');
+      
+          this.$router.push('/signin'); 
+       }
+    })
+    
+       
+     }}
+    })
+</script>
